@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
-import com.example.lb_1.InfoScreen
+import com.example.lb_1.InfoRootScreen
 import com.example.lb_1.PlaceScreen
 import com.example.lb_1.ui.theme.Lb_1Theme
 
@@ -56,8 +56,8 @@ fun Lb_1App() {
                 .padding(innerPadding)) {
                 when (currentDestination) {
                     AppDestinations.HOME -> Greeting(name = "Android", modifier = Modifier.fillMaxSize())
-                    AppDestinations.PLACE -> PlaceScreen(modifier = Modifier.fillMaxSize())       // from PlaceScreen.kt
-                    AppDestinations.INFO -> InfoScreen(modifier = Modifier.fillMaxSize())         // from InfoScreen.kt
+                    AppDestinations.PLACE -> PlaceScreen(modifier = Modifier.fillMaxSize())
+                    AppDestinations.INFO -> InfoRootScreen(modifier = Modifier.fillMaxSize())
                 }
             }
         }

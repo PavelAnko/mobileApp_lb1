@@ -14,9 +14,8 @@ import com.example.lb_1.model.PlaceViewModel
 @Composable
 fun PlaceScreen(
     modifier: Modifier = Modifier,
-    vm: PlaceViewModel = viewModel() // DI: отримуємо ViewModel автоматично
+    vm: PlaceViewModel = viewModel()
 ) {
-    val clicks = vm.clicks.collectAsState()
     val labelText = vm.label.collectAsState()
 
     Column(
