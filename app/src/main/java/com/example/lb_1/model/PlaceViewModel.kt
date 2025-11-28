@@ -1,23 +1,29 @@
 package com.example.lb_1.model
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.example.lb_1.repository.PlaceRepository
 
 class PlaceViewModel : ViewModel() {
-    private val _clicks = MutableStateFlow(0)
-    val clicks = _clicks.asStateFlow()
 
-    private val _label = MutableStateFlow("Натисніть кнопку для отримання позиції")
-    val label = _label.asStateFlow()
+    var items by mutableStateOf<List<PlaceListItem>>(emptyList())
+        private set
 
-    fun onUpdatePosition() {
-        _clicks.value = _clicks.value + 1
-        _label.value = "Оновлено: натиснень ${_clicks.value} — позиція оновлена"
+    init {
+        items = PlaceRepository.loadTestItems()
     }
 
-    fun onReset() {
-        _clicks.value = 0
-        _label.value = "Позицію скинуто"
+    fun addPlace(place: Place) {
+        items = items + PlaceListItem.PlaceItem(place)
+    }
+
+    fun addEvent(event: Event) {
+        items = items + PlaceListItem.EventItem(event)
+    }
+
+    fun clearAll() {
+        items = emptyList()
     }
 }
