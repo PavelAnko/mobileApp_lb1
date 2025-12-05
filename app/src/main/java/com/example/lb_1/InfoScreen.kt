@@ -1,7 +1,8 @@
 package com.example.lb_1
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -9,27 +10,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.lb_1.model.InfoViewModel
 
-enum class InfoDestinations {
-    MAIN_INFO,
-    DETAILS
+object InfoRoutes {
+    const val INFO = "info"
+    const val DETAILS = "details"
 }
 
 @Composable
 fun InfoRootScreen(modifier: Modifier = Modifier) {
-    var current by remember { mutableStateOf(InfoDestinations.MAIN_INFO) }
+    val navController = rememberNavController()
 
     Box(modifier = modifier.fillMaxSize()) {
-        when (current) {
-            InfoDestinations.MAIN_INFO -> InfoScreen(
-                modifier = Modifier.fillMaxSize(),
-                onNavigateDetails = { current = InfoDestinations.DETAILS }
-            )
+        NavHost(
+            navController = navController,
+            startDestination = InfoRoutes.INFO,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            composable(InfoRoutes.INFO) {
+                InfoScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    onNavigateDetails = { navController.navigate(InfoRoutes.DETAILS) }
+                )
+            }
 
-            InfoDestinations.DETAILS -> SimpleDetailsScreen(
-                onBack = { current = InfoDestinations.MAIN_INFO }
-            )
+            composable(InfoRoutes.DETAILS) {
+                SimpleDetailsScreen(
+                    onBack = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
@@ -40,8 +52,8 @@ fun InfoScreen(
     vm: InfoViewModel = viewModel(),
     onNavigateDetails: () -> Unit
 ) {
-    val visible = vm.visible.collectAsState()
-    val note = vm.note.collectAsState()
+    val visible by vm.visible.collectAsState(initial = false)
+    val note by vm.note.collectAsState(initial = "")
 
     Column(
         modifier = modifier
@@ -53,15 +65,15 @@ fun InfoScreen(
         Spacer(Modifier.height(10.dp))
 
         Text(
-            text = if (visible.value)
+            text = if (visible)
                 "Тут показані додаткові відомості про застосунок і метод Віженера."
-            else note.value
+            else note
         )
 
         Spacer(Modifier.height(14.dp))
 
         Button(onClick = { vm.toggleVisible() }) {
-            Text(if (visible.value) "Сховати" else "Показати")
+            Text(if (visible) "Сховати" else "Показати")
         }
 
         Spacer(Modifier.height(14.dp))
