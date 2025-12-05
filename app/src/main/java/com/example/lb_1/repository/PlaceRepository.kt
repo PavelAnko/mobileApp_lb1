@@ -28,6 +28,9 @@ object PlaceRepository {
         val items = mutableListOf<PlaceListItem>()
         items += PlaceListItem.PlaceItem(places[0])
         items += PlaceListItem.EventItem(events[0])
+        items += PlaceListItem.HorizontalPlacesItem(
+            places.filter { it.id != 1L }
+        )
         items += PlaceListItem.PlaceItem(places[1])
         items += PlaceListItem.PlaceItem(places[2])
         items += PlaceListItem.EventItem(events[1])

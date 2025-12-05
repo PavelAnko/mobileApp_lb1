@@ -18,4 +18,5 @@ data class Event(
 sealed class PlaceListItem {
     data class PlaceItem(val place: Place) : PlaceListItem()
     data class EventItem(val event: Event) : PlaceListItem()
+    data class HorizontalPlacesItem(val places: List<Place>) : PlaceListItem()
 }

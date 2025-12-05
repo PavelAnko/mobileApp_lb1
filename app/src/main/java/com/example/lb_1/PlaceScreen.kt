@@ -34,31 +34,18 @@ fun PlaceScreen(
             Text(text = "Місця та події", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(8.dp))
 
-            items.sortedBy { it.id() }.forEachIndexed { index, listItem ->
-                if (index == 2) {
-                    val horizontalPlaces = items
-                        .filterIsInstance<PlaceListItem.PlaceItem>()
-                        .map { it.place }
-                    HorizontalPlaceList(horizontalPlaces)
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-
+            items.forEach { listItem ->
                 when (listItem) {
                     is PlaceListItem.PlaceItem -> PlaceListItemView(place = listItem.place)
                     is PlaceListItem.EventItem -> EventListItemView(event = listItem.event)
+                    is PlaceListItem.HorizontalPlacesItem -> HorizontalPlaceList(listItem.places)
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
             Text(text = "Кінець списку", style = MaterialTheme.typography.bodySmall)
         }
     }
-}
-
-private fun PlaceListItem.id(): Long = when (this) {
-    is PlaceListItem.PlaceItem -> this.place.id
-    is PlaceListItem.EventItem -> this.event.id
 }
 
 @Composable
