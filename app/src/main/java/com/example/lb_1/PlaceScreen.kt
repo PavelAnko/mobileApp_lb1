@@ -22,9 +22,6 @@ fun PlaceScreen(
     vm: PlaceViewModel = viewModel()
 ) {
     val items: List<PlaceListItem> = vm.items
-    val places: List<Place> = items
-        .filterIsInstance<PlaceListItem.PlaceItem>()
-        .map { it.place }
 
     LazyColumn(
         modifier = modifier
@@ -36,33 +33,34 @@ fun PlaceScreen(
         item {
             Text(text = "Місця та події", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(8.dp))
-        }
 
-        if (places.isNotEmpty()) {
-            item {
-                HorizontalPlaceList(places)
-                Spacer(modifier = Modifier.height(12.dp))
-            }
-        }
+            items.sortedBy { it.id() }.forEachIndexed { index, listItem ->
+                if (index == 2) {
+                    val horizontalPlaces = items
+                        .filterIsInstance<PlaceListItem.PlaceItem>()
+                        .map { it.place }
+                    HorizontalPlaceList(horizontalPlaces)
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
 
-        items(items, key = { item ->
-            when (item) {
-                is PlaceListItem.PlaceItem -> "place-${item.place.id}"
-                is PlaceListItem.EventItem -> "event-${item.event.id}"
-            }
-        }) { item ->
-            when (item) {
-                is PlaceListItem.PlaceItem -> PlaceListItemView(place = item.place)
-                is PlaceListItem.EventItem -> EventListItemView(event = item.event)
-            }
-        }
+                when (listItem) {
+                    is PlaceListItem.PlaceItem -> PlaceListItemView(place = listItem.place)
+                    is PlaceListItem.EventItem -> EventListItemView(event = listItem.event)
+                }
 
-        item {
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
             Text(text = "Кінець списку", style = MaterialTheme.typography.bodySmall)
         }
     }
 }
+
+private fun PlaceListItem.id(): Long = when (this) {
+    is PlaceListItem.PlaceItem -> this.place.id
+    is PlaceListItem.EventItem -> this.event.id
+}
+
 @Composable
 fun HorizontalPlaceList(places: List<Place>) {
     LazyRow(
