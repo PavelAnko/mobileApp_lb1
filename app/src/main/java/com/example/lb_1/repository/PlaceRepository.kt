@@ -9,7 +9,10 @@ object PlaceRepository {
         val places = listOf(
             Place(id = 1, name = "Парк Шевченка", address = "вул. Центральна, 10", rating = 4.5f),
             Place(id = 2, name = "Кав'ярня Aroma", address = "вул. Лесі, 5", rating = 4.0f),
-            Place(id = 3, name = "Музей IT", address = "пр. Науки, 3", rating = 4.8f)
+            Place(id = 3, name = "Музей IT", address = "пр. Науки, 3", rating = 4.8f),
+            Place(id = 4, name = "Музей IT", address = "пр. Науки, 3", rating = 4.8f),
+            Place(id = 5, name = "Музей IT", address = "пр. Науки, 3", rating = 4.8f),
+            Place(id = 6, name = "Музей IT", address = "пр. Науки, 3", rating = 4.8f)
         )
 
         val events = listOf(
@@ -28,6 +31,9 @@ object PlaceRepository {
         items += PlaceListItem.PlaceItem(places[1])
         items += PlaceListItem.PlaceItem(places[2])
         items += PlaceListItem.EventItem(events[1])
+        items += PlaceListItem.PlaceItem(places[3])
+        items += PlaceListItem.PlaceItem(places[4])
+        items += PlaceListItem.PlaceItem(places[5])
         return items
     }
 }

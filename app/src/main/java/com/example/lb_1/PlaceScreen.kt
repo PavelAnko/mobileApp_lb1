@@ -21,48 +21,48 @@ fun PlaceScreen(
     modifier: Modifier = Modifier,
     vm: PlaceViewModel = viewModel()
 ) {
-    Column(
+    val items: List<PlaceListItem> = vm.items
+    val places: List<Place> = items
+        .filterIsInstance<PlaceListItem.PlaceItem>()
+        .map { it.place }
+
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(vertical = 8.dp)
     ) {
-        Text(text = "Місця та події", style = MaterialTheme.typography.headlineSmall)
-        Spacer(modifier = Modifier.height(8.dp))
-
-        val places: List<Place> = vm.items
-            .filterIsInstance<PlaceListItem.PlaceItem>()
-            .map { it.place }
-
-        if (places.isNotEmpty()) {
-            HorizontalPlaceList(places)
-            Spacer(modifier = Modifier.height(12.dp))
+        item {
+            Text(text = "Місця та події", style = MaterialTheme.typography.headlineSmall)
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            items(vm.items, key = { item ->
-                when (item) {
-                    is PlaceListItem.PlaceItem -> "place-${item.place.id}"
-                    is PlaceListItem.EventItem -> "event-${item.event.id}"
-                }
-            }) { item ->
-                when (item) {
-                    is PlaceListItem.PlaceItem -> PlaceListItemView(place = item.place)
-                    is PlaceListItem.EventItem -> EventListItemView(event = item.event)
-                }
+        if (places.isNotEmpty()) {
+            item {
+                HorizontalPlaceList(places)
+                Spacer(modifier = Modifier.height(12.dp))
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(text = "Кінець списку", style = MaterialTheme.typography.bodySmall)
+        items(items, key = { item ->
+            when (item) {
+                is PlaceListItem.PlaceItem -> "place-${item.place.id}"
+                is PlaceListItem.EventItem -> "event-${item.event.id}"
+            }
+        }) { item ->
+            when (item) {
+                is PlaceListItem.PlaceItem -> PlaceListItemView(place = item.place)
+                is PlaceListItem.EventItem -> EventListItemView(event = item.event)
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Кінець списку", style = MaterialTheme.typography.bodySmall)
+        }
     }
 }
-
 @Composable
 fun HorizontalPlaceList(places: List<Place>) {
     LazyRow(
@@ -71,7 +71,7 @@ fun HorizontalPlaceList(places: List<Place>) {
             .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(places.size) { index ->
+        items(places, key = { place -> "place-${place.id}" }) { place ->
             Card(
                 modifier = Modifier
                     .width(220.dp)
@@ -79,14 +79,13 @@ fun HorizontalPlaceList(places: List<Place>) {
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                    Text(text = places[index].name, style = MaterialTheme.typography.titleMedium)
+                    Text(text = place.name, style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = places[index].address, style = MaterialTheme.typography.bodySmall)
+                    Text(text = place.address, style = MaterialTheme.typography.bodySmall)
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "Рейтинг: ${places[index].rating}")
+                    Text(text = "Рейтинг: ${place.rating}")
                 }
             }
         }
     }
 }
-
