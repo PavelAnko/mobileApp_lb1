@@ -17,17 +17,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import com.example.lb_1.HomeScreen
 import com.example.lb_1.InfoRootScreen
 import com.example.lb_1.PlaceScreen
+import com.example.lb_1.database.AppDatabase
+import com.example.lb_1.database.MyDao
 import com.example.lb_1.ui.theme.Lb_1Theme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var database: AppDatabase
+    private lateinit var myDao: MyDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        database = AppDatabase.getDatabase(applicationContext)
+        myDao = database.myDao()
+
         enableEdgeToEdge()
         setContent {
             Lb_1Theme {
-                Lb_1App()
+                Lb_1App(myDao = myDao)
             }
         }
     }
@@ -35,7 +44,7 @@ class MainActivity : ComponentActivity() {
 
 @PreviewScreenSizes
 @Composable
-fun Lb_1App() {
+fun Lb_1App(myDao: MyDao? = null) {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
     NavigationSuiteScaffold(
@@ -55,7 +64,11 @@ fun Lb_1App() {
                 .fillMaxSize()
                 .padding(innerPadding)) {
                 when (currentDestination) {
-                    AppDestinations.HOME -> Greeting(name = "Android", modifier = Modifier.fillMaxSize())
+                    AppDestinations.HOME -> if (myDao != null) {
+                        HomeScreen(myDao = myDao, modifier = Modifier.fillMaxSize())
+                    } else {
+                        Text("DAO not initialized", modifier = Modifier.fillMaxSize())
+                    }
                     AppDestinations.PLACE -> PlaceScreen(modifier = Modifier.fillMaxSize())
                     AppDestinations.INFO -> InfoRootScreen(modifier = Modifier.fillMaxSize())
                 }
@@ -63,7 +76,6 @@ fun Lb_1App() {
         }
     }
 }
-
 enum class AppDestinations(val label: String, val icon: ImageVector) {
     HOME("Home", Icons.Default.Home),
     PLACE("Place", Icons.Default.Place),
